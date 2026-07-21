@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BaseLayout description="技术方案与学习笔记">
+  <section class="hero">
+    <h1>技术方案与学习笔记</h1>
+    <p>低成本起步的个人知识库：文章以 Markdown 存放，可随时迁移到其他框架或托管平台。</p>
+  </section>
+
+  {
+    posts.length === 0 ? (
+      <p class="empty">暂无文章。在 src/content/blog/ 下新增 Markdown 即可。</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+              </time>
+              {post.data.tags.length > 0 && (
+                <div class="tags">
+                  {post.data.tags.map((tag) => (
+                    <a class="tag" href={`/tags/${tag}/`}>
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+            <h2>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            </h2>
+            <p class="excerpt">{post.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

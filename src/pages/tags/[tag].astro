@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => !post.data.draft && post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BaseLayout title={`标签：${tag}`} description={`带有「${tag}」标签的文章`}>
+  <section class="page-heading">
+    <h1>标签：{tag}</h1>
+    <p>共 {posts.length} 篇文章</p>
+  </section>
+
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li class="post-item">
+          <div class="post-meta">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {formatDate(post.data.pubDate)}
+            </time>
+            <div class="tags">
+              {post.data.tags.map((t) => (
+                <a class="tag" href={`/tags/${t}/`}>
+                  {t}
+                </a>
+              ))}
+            </div>
+          </div>
+          <h2>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          </h2>
+          <p class="excerpt">{post.data.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <a class="back-link" href="/">← 返回文章列表</a>
+</BaseLayout>
