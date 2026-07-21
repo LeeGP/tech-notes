@@ -6,8 +6,8 @@ interface Props {
   description?: string;
 }
 
-const siteName = 'Tech Notes';
-const { title, description = '技术方案与学习笔记' } = Astro.props;
+const siteName = 'Lee的个人站';
+const { title, description = 'Lee的个人站 · 技术方案与学习笔记' } = Astro.props;
 const pageTitle = title ? `${title} · ${siteName}` : siteName;
 ---
 
@@ -21,7 +21,7 @@ const pageTitle = title ? `${title} · ${siteName}` : siteName;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <title>{pageTitle}</title>
